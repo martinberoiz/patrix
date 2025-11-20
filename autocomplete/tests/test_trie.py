@@ -23,3 +23,10 @@ def test_trie_search():
     assert "e" in t.search("tre").children
     assert t.search("try").value == 3
     assert t.search("trio") is None
+
+
+def test_get_key():
+    t = trie.Trie((("trie", 1), ("tree", 2), ("try", 3)))
+    assert t.search("tri").get_key() == "tri"
+    assert t.search("tre").get_key() == "tre"
+    assert t.search("try").get_key() == "try"

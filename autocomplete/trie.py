@@ -25,6 +25,8 @@ class TrieNode:
     def __init__(self):
         self.children = {}
         self.value = None
+        self.parent = None
+        self.prefix = ""
 
     def insert(self, key, value):
         if len(key) == 0:
@@ -39,6 +41,8 @@ class TrieNode:
         # If there is no children with that key, create one
         child = TrieNode()
         self.children[prefix] = child
+        child.parent = self
+        child.prefix = prefix
         child.insert(suffix, value)
 
     def search(self, word):
@@ -51,3 +55,8 @@ class TrieNode:
 
     def as_dict(self):
         return {k: v.as_dict() for k, v in self.children.items()}
+
+    def get_key(self):
+        if self.parent is None:
+            return ""
+        return self.parent.get_key() + self.prefix
