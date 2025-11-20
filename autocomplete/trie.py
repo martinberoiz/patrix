@@ -3,6 +3,10 @@ class Trie:
     def __init__(self, key_value_pairs):
         self.root = TrieNode()
         for key, value in key_value_pairs:
+            if key == "":
+                raise ValueError("Key cannot be empty")
+            if not isinstance(key, str):
+                raise ValueError("Key must be a string")
             self.root.insert(key, value)
 
     def as_dict(self):
@@ -14,7 +18,6 @@ class TrieNode:
     def __init__(self):
         self.children = {}
         self.value = None
-        pass
 
     def insert(self, key, value):
         if len(key) == 0:
