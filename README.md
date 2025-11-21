@@ -32,3 +32,12 @@ Add a new word to the trie:
 >>> t.as_dict()
 {'t': {'r': {'e': {'e': {}}, 'i': {'e': {}, 'o': {}}, 'y': {}}}}
 ```
+
+## Radix tree example
+
+```python
+>>> from autocomplete import radix
+>>> r = radix.RadixTree((("computer", 1), ("compute", 2), ("computing", 3)))
+>>> r.as_dict()
+{'comput': {'e': {'': {}, 'r': {}}, 'ing': {}}}
+```
