@@ -1,0 +1,18 @@
+[project]
+name = "autocomplete"
+dynamic = ["version"]
+description = "A python package that uses a compressed prefix tree (aka trie or radix tree) to store a dictionary of 'correct' words and provides suggestions to complete partial words."
+authors = [
+    { name = "Martin Beroiz", email = "martin.beroiz@ligo.org" }
+]
+license = { file = "LICENSE.txt" }
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["autocomplete"]
+
+[tool.setuptools.dynamic]
+version = {attr = "autocomplete.__version__"}
