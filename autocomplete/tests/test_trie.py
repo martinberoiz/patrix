@@ -30,3 +30,11 @@ def test_get_key():
     assert t.search("tri").get_key() == "tri"
     assert t.search("tre").get_key() == "tre"
     assert t.search("try").get_key() == "try"
+
+
+def test_insert():
+    t = trie.Trie((("trie", 1), ("tree", 2), ("try", 3)))
+    t.insert("trio", 4)
+    assert t.as_dict() == {
+        "t": {"r": {"e": {"e": {}}, "i": {"e": {}, "o": {}}, "y": {}}}
+    }

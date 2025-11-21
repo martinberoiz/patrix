@@ -13,3 +13,22 @@ It is used in autocomplete systems to provide suggestions to users based on the 
 >>> t.as_dict()
 {'t': {'r': {'i': {'e': {}}, 'y': {}, 'e': {'e': {}}}}}
 ```
+
+Search for a word in the trie:
+
+```python
+>>> t.search("tri")
+<autocomplete.trie.TrieNode object at 0x7f952c171c10>
+>>> t.search("tri").get_key()
+'tri'
+>>> t.search("trio") is None
+True
+```
+
+Add a new word to the trie:
+
+```python
+>>> t.insert("trio", 4)
+>>> t.as_dict()
+{'t': {'r': {'e': {'e': {}}, 'i': {'e': {}, 'o': {}}, 'y': {}}}}
+```
