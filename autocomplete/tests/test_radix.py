@@ -74,3 +74,13 @@ def test_key():
     assert r.root.children["comput"].key == "comput"
     assert r.root.children["comput"].children["e"].key == "compute"
     assert r.root.children["comput"].children["ing"].key == "computing"
+
+
+def test_completions():
+    r = RadixTree((("computer", 1), ("computing", 2), ("compute", 3), ("screen", 4)))
+    assert r.completions("comp") == {"comput"}
+    assert r.completions("comput") == {"compute", "computing"}
+    assert r.completions("compute") == {"compute", "computer"}
+    assert r.completions("computing") == set()
+    assert r.completions("computer") == set()
+    assert r.completions("s") == {"screen"}

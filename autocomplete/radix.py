@@ -67,6 +67,22 @@ class RadixTree:
             raise ValueError("Key must be a string")
         self.root.insert(key, value)
 
+    def completions(self, key):
+        """
+        Return possible completions for the given key.
+
+        Parameters
+        ----------
+        key : str
+            The key to search for.
+
+        Returns
+        -------
+        list
+            A list of possible completions for the given key.
+        """
+        return self.root.completions(key)
+
     def as_dict(self):
         """
         Convert the radix tree to a nested dictionary representation.
@@ -185,6 +201,43 @@ class RadixNode:
 
         # Remove the old reference to the existing child under its original prefix
         del self.children[existing_prefix]
+
+    def completions(self, key):
+        """
+        Return possible completions for the given key.
+
+        Parameters
+        ----------
+        key : str
+            The key to search for completions.
+
+        Returns
+        -------
+        set
+            A set of possible completions for the given key.
+        """
+
+        query = key
+        common_prefix, existing_prefix, node = self._find_common_prefix_child(query)
+        if node is None:
+            return set()
+
+        while node is not None:
+            # Update search prefix to remove the common_prefix found
+            query = query[len(common_prefix) :]
+            # Save the last node that is not None
+            last_node = node
+            common_prefix, existing_prefix, node = node._find_common_prefix_child(query)
+        # If the key is shorter than this node's key, complete until reaching the node's key
+        if len(key) < len(last_node.key):
+            return {last_node.key}
+        # When at exactly this node's key, complete with the children's keys
+        return set(nd.key for nd in last_node.children.values())
+
+    @property
+    def siblings(self):
+        "Return all the siblings, including the child."
+        return self.parent.children
 
     def _find_common_prefix_child(self, key):
         """

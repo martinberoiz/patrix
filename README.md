@@ -41,3 +41,16 @@ Add a new word to the trie:
 >>> r.as_dict()
 {'comput': {'e': {'': {}, 'r': {}}, 'ing': {}}}
 ```
+
+Display suggestions on how to continue a given query prefix
+
+```python
+>>> r.completions("c")
+{'comput'}
+>>> r.completions("comput")
+{'compute', 'computing'}
+>>> r.completions("compute") # The word 'compute' here is both a stem and a final word
+{'compute', 'computer'}
+>>> r.completions("p")
+set()
+```
