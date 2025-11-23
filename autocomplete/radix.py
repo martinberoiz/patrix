@@ -79,6 +79,14 @@ class RadixTree:
         """
         return self.root.as_dict()
 
+    @property
+    def height(self):
+        """
+        Height of the radix tree.
+        """
+        # Subtract 1 to exclude the root node
+        return self.root.height - 1
+
 
 class RadixNode:
     """
@@ -245,3 +253,12 @@ class RadixNode:
             empty dictionaries.
         """
         return {k: v.as_dict() for k, v in self.children.items()}
+
+    @property
+    def height(self):
+        """
+        Height of the subtree rooted at this node.
+        """
+        if self.children == {}:
+            return 1
+        return 1 + max(v.height for v in self.children.values())
