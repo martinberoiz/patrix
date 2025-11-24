@@ -10,7 +10,7 @@ lookups and insertions.
 
 class RadixTree:
     """
-    A radix tree data structure for efficient key-value storage with compressed prefixes.
+    A radix tree data structure for key-value pairs storage with compressed prefixes.
 
     The RadixTree compresses common prefixes among keys, making it more memory-efficient
     than a standard trie while maintaining fast insertion and lookup operations.
@@ -191,7 +191,8 @@ class RadixNode:
             existing_child.value = value
             return
 
-        # Case 3: Key extends beyond the common prefix - recursively insert into existing child
+        # Case 3: Key extends beyond the common prefix - recursively insert
+        # into existing child
         if common_prefix == existing_prefix:
             remaining_key = key[len(common_prefix) :]
             existing_child.insert(remaining_key, value)
@@ -243,7 +244,8 @@ class RadixNode:
             # Save the last node that is not None
             last_node = node
             common_prefix, existing_prefix, node = node._find_common_prefix_child(query)
-        # If the key is shorter than this node's key, complete until reaching the node's key
+        # If the key is shorter than this node's key, complete until reaching
+        # the node's key
         if len(key) < len(last_node.key):
             return {last_node.key}
         # When at exactly this node's key, complete with the children's keys
@@ -270,7 +272,8 @@ class RadixNode:
         -------
         tuple
             A tuple (common_prefix, existing_prefix, child) where:
-            - common_prefix (str): The longest common prefix between key and the first found child
+            - common_prefix (str): The longest common prefix between key
+              and the first found child
             - existing_prefix (str): The prefix of the first found child
             - child (RadixNode): The child node, or None if no common prefix exists
             Returns ("", "", None) if no child shares a common prefix with key.
