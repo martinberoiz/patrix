@@ -2,6 +2,7 @@
 name = "patrix"
 dynamic = ["version"]
 description = "A python package that uses a compressed prefix tree (aka trie or radix tree) to store a dictionary of 'correct' words and provides suggestions to complete partial words."
+readme = {file = "README.md", content-type = "text/markdown"}
 authors = [
     { name = "Martin Beroiz", email = "martin.beroiz@ligo.org" }
 ]
