@@ -32,3 +32,25 @@ Add a new word to the trie:
 >>> t.as_dict()
 {'t': {'r': {'e': {'e': {}}, 'i': {'e': {}, 'o': {}}, 'y': {}}}}
 ```
+
+## Radix tree example
+
+```python
+>>> from autocomplete import radix
+>>> r = radix.RadixTree((("computer", 1), ("compute", 2), ("computing", 3)))
+>>> r.as_dict()
+{'comput': {'e': {'': {}, 'r': {}}, 'ing': {}}}
+```
+
+Display suggestions on how to continue a given query prefix
+
+```python
+>>> r.completions("c")
+{'comput'}
+>>> r.completions("comput")
+{'compute', 'computing'}
+>>> r.completions("compute") # The word 'compute' here is both a stem and a final word
+{'compute', 'computer'}
+>>> r.completions("p")
+set()
+```
