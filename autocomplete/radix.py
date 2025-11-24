@@ -105,6 +105,23 @@ class RadixTree:
         # Subtract 1 to exclude the root node
         return self.root.height - 1
 
+    @property
+    def size(self):
+        """
+        Size of the radix tree.
+        """
+        return self.root.size
+
+    @property
+    def total_chars(self):
+        """
+        Total number of characters stored in all prefixes of the radix tree.
+
+        This represents the compressed size of the tree. Compare this to the
+        sum of len(key) for all keys to calculate the compression rate.
+        """
+        return self.root.total_chars
+
 
 class RadixNode:
     """
@@ -326,3 +343,21 @@ class RadixNode:
         if self.parent is None:
             return self.prefix
         return self.parent.key + self.prefix
+
+    @property
+    def size(self):
+        """
+        Number of nodes in the subtree rooted at this node, including this node.
+        """
+        return 1 + sum(child.size for child in self.children.values())
+
+    @property
+    def total_chars(self):
+        """
+        Total number of characters in all prefixes in the subtree rooted at this node.
+
+        This includes the prefix of this node plus all prefixes in its subtree.
+        """
+        return len(self.prefix) + sum(
+            child.total_chars for child in self.children.values()
+        )
