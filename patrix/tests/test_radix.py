@@ -1,4 +1,4 @@
-from patrix.radix import RadixTree
+from patrix import RadixTree
 import pytest
 
 

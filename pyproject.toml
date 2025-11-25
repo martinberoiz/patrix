@@ -6,7 +6,10 @@ readme = {file = "README.md", content-type = "text/markdown"}
 authors = [
     { name = "Martin Beroiz", email = "martin.beroiz@ligo.org" }
 ]
-license = { file = "LICENSE.txt" }
+license = { text = "MIT" }
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+]
 keywords = [
     "autocomplete",
     "radix",
@@ -20,6 +23,9 @@ keywords = [
     "dictionary",
     "prefix-matching",
 ]
+
+[project.urls]
+Repository = "https://github.com/martinberoiz/patrix"
 
 [build-system]
 requires = ["setuptools", "wheel"]

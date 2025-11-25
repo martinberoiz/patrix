@@ -8,8 +8,8 @@ It is used in autocomplete systems to provide suggestions to users based on the 
 ## Trie example
 
 ```python
->>> from patrix import trie
->>> t = trie.Trie((("trie", 1), ("try", 2), ("tree", 3)))
+>>> from patrix import Trie
+>>> t = Trie((("trie", 1), ("try", 2), ("tree", 3)))
 >>> t.as_dict()
 {'t': {'r': {'i': {'e': {}}, 'y': {}, 'e': {'e': {}}}}}
 ```
@@ -36,8 +36,8 @@ Add a new word to the trie:
 ## Radix tree example
 
 ```python
->>> from patrix import radix
->>> r = radix.RadixTree((("computer", 1), ("compute", 2), ("computing", 3)))
+>>> from patrix import RadixTree
+>>> r = RadixTree((("computer", 1), ("compute", 2), ("computing", 3)))
 >>> r.as_dict()
 {'comput': {'e': {'': {}, 'r': {}}, 'ing': {}}}
 ```

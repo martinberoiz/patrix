@@ -146,7 +146,7 @@ class RadixNode:
 
         Parameters
         ----------
-        value, optional
+        value : any, optional
             The value to store at this node. Defaults to None.
         prefix : str, optional
             The prefix string for this node. Defaults to empty string.
