@@ -84,3 +84,22 @@ def test_completions():
     assert r.completions("computing") == set()
     assert r.completions("computer") == set()
     assert r.completions("s") == {"screen"}
+    assert r.completions("a") == set()
+
+
+def test_size():
+    r = RadixTree((("computer", 1), ("computing", 2), ("compute", 3)))
+    assert r.size == 6
+
+
+def test_total_chars():
+    r = RadixTree((("computer", 1), ("computing", 2), ("compute", 3)))
+    assert r.total_chars == 11
+
+
+def test_siblings():
+    r = RadixTree((("computer", 1), ("computing", 2), ("compute", 3)))
+    node = r.root.children["comput"].children["e"]
+    assert len(node.siblings) == 2
+    assert "e" in node.siblings
+    assert "ing" in node.siblings

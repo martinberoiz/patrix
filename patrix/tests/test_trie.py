@@ -23,6 +23,12 @@ def test_search():
     assert "e" in t.search("tre").children
     assert t.search("try").value == 3
     assert t.search("trio") is None
+    assert t.search("notaword") is None
+
+    with pytest.raises(ValueError):
+        t.search("")
+    with pytest.raises(ValueError):
+        t.search(1)
 
 
 def test_get_key():
