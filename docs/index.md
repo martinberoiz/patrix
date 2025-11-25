@@ -43,12 +43,6 @@ These data structures are designed to be efficient for partial word completion.
 {'comput': {'e': {'': {}, 'r': {}}, 'ing': {}, 'ation': {}}}
 ```
 
-## Installation
-
-```bash
-pip install patrix
-```
-
 ## License
 
 MIT License - see LICENSE.txt for details.

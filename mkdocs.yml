@@ -2,32 +2,15 @@ site_name: Patrix
 site_description: A python package that uses a compressed prefix tree (aka trie or radix tree) to store a dictionary of 'correct' words and provides suggestions to complete partial words.
 site_author: Martin Beroiz
 site_url: https://github.com/martinberoiz/patrix
-
 repo_name: patrix
 repo_url: https://github.com/martinberoiz/patrix
 
 theme:
-  name: material
-  palette:
-    - scheme: default
-      primary: indigo
-      accent: indigo
-      toggle:
-        icon: material/brightness-7
-        name: Switch to dark mode
-    - scheme: slate
-      primary: indigo
-      accent: indigo
-      toggle:
-        icon: material/brightness-4
-        name: Switch to light mode
+  name: material_igwn
   features:
-    - navigation.tabs
     - navigation.sections
     - navigation.expand
     - navigation.top
-    - search.suggest
-    - search.highlight
     - content.code.annotate
 
 plugins:
@@ -68,9 +51,11 @@ markdown_extensions:
 
 nav:
   - Home: index.md
+  - Installation: install.md
   - Usage: usage.md
   - API Reference:
     - Trie: api/trie.md
     - Radix Tree: api/radix.md
+
 
 copyright: Copyright &copy; 2025 California Institute of Technology and contributors
