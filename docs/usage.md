@@ -61,7 +61,7 @@ The radix tree compresses common prefixes, reducing memory usage:
 24
 >>> 1 - 11 / 24  # 54% compression rate
 0.5416666666666667
->>> r.size  # nodes in the tree excluding the root
+>>> r.size  # nodes in the tree
 6
 ```
 
@@ -72,7 +72,7 @@ Access tree metrics:
 ```python
 >>> r.height  # Height of the tree
 3
->>> r.size  # Number of nodes (excluding root)
+>>> r.size  # Number of nodes
 6
 >>> r.total_chars  # Total characters in all prefixes
 11
