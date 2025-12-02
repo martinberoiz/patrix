@@ -140,7 +140,7 @@ class RadixNode:
         The prefix string associated with this node.
     """
 
-    def __init__(self, value=None, prefix="", parent=None):
+    def __init__(self, prefix="", value=None, parent=None):
         """
         Initialize a RadixNode.
 
@@ -183,7 +183,7 @@ class RadixNode:
 
         # Case 1: No common prefix found - create a new child node
         if existing_child is None:
-            self.children[key] = RadixNode(value, key, parent=self)
+            self.children[key] = RadixNode(key, value, parent=self)
             return
 
         # Case 2: Exact match - key matches an existing child's prefix exactly
@@ -200,7 +200,7 @@ class RadixNode:
 
         # Case 4: Key and existing child share a prefix but diverge - split the node
         # Create an intermediate node to hold the common prefix
-        intermediate_node = RadixNode(None, common_prefix, parent=self)
+        intermediate_node = RadixNode(common_prefix, None, parent=self)
         self.children[common_prefix] = intermediate_node
 
         # Move the existing child under the intermediate node with its remaining prefix
@@ -212,7 +212,7 @@ class RadixNode:
         # Create a new child for the key under the intermediate node
         remaining_key = key[len(common_prefix) :]
         intermediate_node.children[remaining_key] = RadixNode(
-            value, remaining_key, parent=intermediate_node
+            remaining_key, value, parent=intermediate_node
         )
 
         # Remove the old reference to the existing child under its original prefix
