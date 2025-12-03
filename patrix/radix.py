@@ -154,11 +154,12 @@ class RadixNode:
             The parent node. Defaults to None.
         """
         self.children = {}
-        self.value = value
-        self.parent = parent
         self.prefix = prefix
+        if value is not None:
+            self.value = value
+        self.parent = parent
 
-    def insert(self, key, value):
+    def insert(self, key, value=None):
         """
         Insert a key-value pair into the subtree rooted at this node.
 
@@ -188,7 +189,8 @@ class RadixNode:
 
         # Case 2: Exact match - key matches an existing child's prefix exactly
         if common_prefix == existing_prefix == key:
-            existing_child.value = value
+            if value is not None:
+                existing_child.value = value
             return
 
         # Case 3: Key extends beyond the common prefix - recursively insert
@@ -200,7 +202,7 @@ class RadixNode:
 
         # Case 4: Key and existing child share a prefix but diverge - split the node
         # Create an intermediate node to hold the common prefix
-        intermediate_node = RadixNode(common_prefix, None, parent=self)
+        intermediate_node = RadixNode(common_prefix, parent=self)
         self.children[common_prefix] = intermediate_node
 
         # Move the existing child under the intermediate node with its remaining prefix
@@ -252,8 +254,24 @@ class RadixNode:
         return set(nd.key for nd in last_node.children.values())
 
     @property
+    def value(self):
+        """
+        The value stored at this node, if any.
+        """
+        return getattr(self, "_value", None)
+
+    @value.setter
+    def value(self, value):
+        """
+        Set the value stored at this node.
+        """
+        self._value = value
+
+    @property
     def siblings(self):
-        "Return all the siblings, including the child."
+        """
+        All the siblings, including the child.
+        """
         return self.parent.children
 
     def _find_common_prefix_child(self, key):
