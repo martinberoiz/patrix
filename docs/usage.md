@@ -14,13 +14,14 @@ Initialize a RadixTree with a collection of key-value pairs:
 from patrix import RadixTree
 
 # Create a radix tree with initial data
-r = RadixTree((("computer", 1), ("compute", 2)))
+# values are optional, but if provided, enter them as tuples (word, value)
+r = RadixTree((("computer", 1), "compute"))
 ```
 
 Insert a new word into the radix tree:
 
 ```python
->>> r.insert("computing", 3)
+>>> r.insert("computing")
 >>> r.as_dict()
 {'comput': {'e': {'': {}, 'r': {}}, 'ing': {}}}
 ```
@@ -45,7 +46,7 @@ set()
 Convert the radix tree to a nested dictionary representation:
 
 ```python
->>> r = radix.RadixTree((("computer", 1), ("compute", 2), ("computing", 3)))
+>>> r = RadixTree(("computer", "compute", "computing"))
 >>> r.as_dict()
 {'comput': {'e': {'': {}, 'r': {}}, 'ing': {}}}
 ```
@@ -155,11 +156,11 @@ from patrix import RadixTree
 
 # Build a dictionary of words with their frequencies
 words = [
-    ("python", 100),
-    ("programming", 50),
-    ("program", 75),
-    ("project", 30),
-    ("package", 25),
+    "python",
+    "programming",
+    "program",
+    "project",
+    "package",
 ]
 
 # Create radix tree
