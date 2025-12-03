@@ -9,9 +9,25 @@ def test_init():
     assert child.prefix == "computer"
     assert child.value == 1
 
+    # Test loading from list of strings
+    r = RadixTree(["computer", "computing", "compute"])
+    assert "comput" in r.root.children
+
+    # Test loading from list of key-value pairs
+    r = RadixTree((("computer", 1), ("computing", 2), ("compute", 3)))
+    assert "comput" in r.root.children
+
+    # Test loading from list of mixed strings and key-value pairs
+    r = RadixTree((("computer", 1), "computing", ("compute", 2)))
+    assert "comput" in r.root.children
+
+    # Test loading from list of mixed strings and key-value pairs
+    r = RadixTree((("computer", 1), "computing", ("compute", 2)))
+    assert "comput" in r.root.children
+
 
 def test_parent_relations():
-    r = RadixTree((("computer", 1), ("computing", 2), ("compute", 3), ("screen", 4)))
+    r = RadixTree(["computer", "computing", "compute", "screen"])
 
     # Depth-first search to check parent-child relationships
     stack = [r.root]
@@ -23,24 +39,24 @@ def test_parent_relations():
 
 
 def test_as_dict():
-    r = RadixTree((("computer", 1),))
+    r = RadixTree(("computer",))
     assert r.as_dict() == {"computer": {}}
 
-    r = RadixTree((("computer", 1), ("screen", 2)))
+    r = RadixTree(("computer", "screen"))
     assert r.as_dict() == {"computer": {}, "screen": {}}
 
-    r = RadixTree((("computer", 1), ("compute", 2)))
+    r = RadixTree(("computer", "compute"))
     assert r.as_dict() == {"compute": {"": {}, "r": {}}}
 
-    r = RadixTree((("computer", 1), ("computing", 2)))
+    r = RadixTree(("computer", "computing"))
     assert r.as_dict() == {"comput": {"er": {}, "ing": {}}}
 
-    r = RadixTree((("computer", 1), ("computing", 2), ("compute", 3)))
+    r = RadixTree(("computer", "computing", "compute"))
     assert r.as_dict() == {"comput": {"e": {"": {}, "r": {}}, "ing": {}}}
 
 
 def test_insert():
-    r = RadixTree((("computer", 1),))
+    r = RadixTree(("computer",))
     assert r.as_dict() == {"computer": {}}
     r.insert("computing", 2)
     assert r.as_dict() == {"comput": {"er": {}, "ing": {}}}
@@ -77,7 +93,7 @@ def test_key():
 
 
 def test_completions():
-    r = RadixTree((("computer", 1), ("computing", 2), ("compute", 3), ("screen", 4)))
+    r = RadixTree(["computer", "computing", "compute", "screen"])
     assert r.completions("comp") == {"comput"}
     assert r.completions("comput") == {"compute", "computing"}
     assert r.completions("compute") == {"compute", "computer"}
