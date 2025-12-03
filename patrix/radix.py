@@ -14,6 +14,7 @@ class RadixTree:
 
     The RadixTree compresses common prefixes among keys, making it more memory-efficient
     than a standard trie while maintaining fast insertion and lookup operations.
+    The entries can be a list of strings or a list of (key, value) tuples.
 
     Attributes
     ----------
@@ -21,26 +22,25 @@ class RadixTree:
         The root node of the radix tree.
     """
 
-    def __init__(self, key_value_pairs):
+    def __init__(self, entries):
         """
-        Initialize a RadixTree with a collection of key-value pairs.
+        Initialize a RadixTree with a collection of strings or key-value pairs.
 
         Parameters
         ----------
-        key_value_pairs : iterable
-            An iterable of (key, value) tuples to insert into the tree.
+        entries : iterable
+            An iterable of strings or (key, value) tuples to insert into the tree.
             Each key must be a non-empty string.
 
-        Raises
-        ------
-        ValueError
-            If any key is empty or not a string.
         """
         self.root = RadixNode()
-        for key, value in key_value_pairs:
-            self.insert(key, value)
+        for entry in entries:
+            if isinstance(entry, str):
+                self.insert(entry)
+            else:
+                self.insert(*entry)
 
-    def insert(self, key, value):
+    def insert(self, key, value=None):
         """
         Insert a key-value pair into the radix tree.
 
