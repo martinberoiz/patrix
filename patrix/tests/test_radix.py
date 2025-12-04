@@ -38,41 +38,41 @@ def test_parent_relations():
         stack.extend(node.children.values())
 
 
-def test_as_dict():
+def test_asdict():
     r = RadixTree(("computer",))
-    assert r.as_dict() == {"computer": {}}
+    assert r.asdict() == {"computer": {}}
 
     r = RadixTree(("computer", "screen"))
-    assert r.as_dict() == {"computer": {}, "screen": {}}
+    assert r.asdict() == {"computer": {}, "screen": {}}
 
     r = RadixTree(("computer", "compute"))
-    assert r.as_dict() == {"compute": {"": {}, "r": {}}}
+    assert r.asdict() == {"compute": {"": {}, "r": {}}}
 
     r = RadixTree(("computer", "computing"))
-    assert r.as_dict() == {"comput": {"er": {}, "ing": {}}}
+    assert r.asdict() == {"comput": {"er": {}, "ing": {}}}
 
     r = RadixTree(("computer", "computing", "compute"))
-    assert r.as_dict() == {"comput": {"e": {"": {}, "r": {}}, "ing": {}}}
+    assert r.asdict() == {"comput": {"e": {"": {}, "r": {}}, "ing": {}}}
 
 
 def test_insert():
     r = RadixTree(("computer",))
-    assert r.as_dict() == {"computer": {}}
+    assert r.asdict() == {"computer": {}}
     r.insert("computing", 2)
-    assert r.as_dict() == {"comput": {"er": {}, "ing": {}}}
+    assert r.asdict() == {"comput": {"er": {}, "ing": {}}}
     r.insert("compute", 3)
-    assert r.as_dict() == {"comput": {"e": {"": {}, "r": {}}, "ing": {}}}
+    assert r.asdict() == {"comput": {"e": {"": {}, "r": {}}, "ing": {}}}
 
 
 def test_insertion_order():
     r = RadixTree(("compute", "computer", "computing"))
     s = RadixTree(("computer", "compute", "computing"))
-    assert r.as_dict() == s.as_dict()
+    assert r.asdict() == s.asdict()
 
 
 def test_duplicate():
     r = RadixTree((("computer", 1), ("computer", 2)))
-    assert r.as_dict() == {"computer": {}}
+    assert r.asdict() == {"computer": {}}
 
 
 def test_empty_key():
@@ -129,5 +129,5 @@ def test_siblings():
 
 def test_from_dict():
     r = RadixTree(["computer", "computing", "compute", "screen"])
-    s = RadixTree.from_dict(r.as_dict())
-    assert s.as_dict() == r.as_dict()
+    s = RadixTree.from_dict(r.asdict())
+    assert s.asdict() == r.asdict()

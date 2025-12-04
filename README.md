@@ -15,7 +15,7 @@ It is used in autocomplete systems to provide suggestions to users based on the 
 ```python
 >>> from patrix import Trie
 >>> t = Trie((("trie", 1), ("try", 2), ("tree", 3)))
->>> t.as_dict()
+>>> t.asdict()
 {'t': {'r': {'i': {'e': {}}, 'y': {}, 'e': {'e': {}}}}}
 ```
 
@@ -34,7 +34,7 @@ Add a new word to the trie:
 
 ```python
 >>> t.insert("trio", 4)
->>> t.as_dict()
+>>> t.asdict()
 {'t': {'r': {'e': {'e': {}}, 'i': {'e': {}, 'o': {}}, 'y': {}}}}
 ```
 
@@ -44,7 +44,7 @@ Add a new word to the trie:
 >>> from patrix import RadixTree
 >>> # Entries can be a list of strings or key-value tuples
 >>> r = RadixTree(("computer", "compute", ("computing", 1)))
->>> r.as_dict()
+>>> r.asdict()
 {'comput': {'e': {'': {}, 'r': {}}, 'ing': {}}}
 ```
 

@@ -22,7 +22,7 @@ Insert a new word into the radix tree:
 
 ```python
 >>> r.insert("computing")
->>> r.as_dict()
+>>> r.asdict()
 {'comput': {'e': {'': {}, 'r': {}}, 'ing': {}}}
 ```
 
@@ -47,7 +47,7 @@ Convert the radix tree to a nested dictionary representation:
 
 ```python
 >>> r = RadixTree(("computer", "compute", "computing"))
->>> r.as_dict()
+>>> r.asdict()
 {'comput': {'e': {'': {}, 'r': {}}, 'ing': {}}}
 ```
 
@@ -113,7 +113,7 @@ Add a new word to the trie:
 
 ```python
 >>> t.insert("trio", 4)
->>> t.as_dict()
+>>> t.asdict()
 {'t': {'r': {'e': {'e': {}}, 'i': {'e': {}, 'o': {}}, 'y': {}}}}
 ```
 
@@ -123,7 +123,7 @@ Convert the trie to a nested dictionary representation:
 
 ```python
 >>> t = trie.Trie((("trie", 1), ("try", 2), ("tree", 3)))
->>> t.as_dict()
+>>> t.asdict()
 {'t': {'r': {'i': {'e': {}}, 'y': {}, 'e': {'e': {}}}}}
 ```
 

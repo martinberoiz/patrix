@@ -92,7 +92,7 @@ class Trie:
             raise ValueError("Word must be a string")
         return self.root.search(word)
 
-    def as_dict(self):
+    def asdict(self):
         """
         Convert the trie to a nested dictionary representation.
 
@@ -104,7 +104,7 @@ class Trie:
             Note: This representation does not preserve the values stored
             in leaf nodes, only the tree structure.
         """
-        return self.root.as_dict()
+        return self.root.asdict()
 
 
 class TrieNode:
@@ -193,7 +193,7 @@ class TrieNode:
             return None
         return self.children[char].search(word[1:])
 
-    def as_dict(self):
+    def asdict(self):
         """
         Convert the subtree rooted at this node to a nested dictionary.
 
@@ -207,7 +207,7 @@ class TrieNode:
             dictionaries representing child subtrees. Leaf nodes return
             empty dictionaries.
         """
-        return {k: v.as_dict() for k, v in self.children.items()}
+        return {k: v.asdict() for k, v in self.children.items()}
 
     def get_key(self):
         """

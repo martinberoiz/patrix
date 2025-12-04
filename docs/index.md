@@ -25,7 +25,7 @@ These data structures are designed to be efficient for partial word completion.
 ```python
 >>> from patrix import Trie
 >>> t = Trie((("trie", 1), ("try", 2), ("tree", 3)))
->>> t.as_dict()
+>>> t.asdict()
 {'t': {'r': {'i': {'e': {}}, 'y': {}, 'e': {'e': {}}}}}
 ```
 
@@ -39,7 +39,7 @@ These data structures are designed to be efficient for partial word completion.
 >>> r.insert("computation", 4)
 >>> r.completions("comput")
 {'compute', 'computing', 'computation'}
->>> r.as_dict()
+>>> r.asdict()
 {'comput': {'e': {'': {}, 'r': {}}, 'ing': {}, 'ation': {}}}
 ```
 

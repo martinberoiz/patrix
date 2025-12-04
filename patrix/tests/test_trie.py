@@ -4,7 +4,7 @@ import pytest
 
 def test_init():
     t = Trie((("trie", 1), ("tree", 2), ("try", 3)))
-    assert t.as_dict() == {"t": {"r": {"e": {"e": {}}, "i": {"e": {}}, "y": {}}}}
+    assert t.asdict() == {"t": {"r": {"e": {"e": {}}, "i": {"e": {}}, "y": {}}}}
 
 
 def test_empty_key():
@@ -41,6 +41,6 @@ def test_get_key():
 def test_insert():
     t = Trie((("trie", 1), ("tree", 2), ("try", 3)))
     t.insert("trio", 4)
-    assert t.as_dict() == {
+    assert t.asdict() == {
         "t": {"r": {"e": {"e": {}}, "i": {"e": {}, "o": {}}, "y": {}}}
     }
