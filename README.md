@@ -1,7 +1,6 @@
 # Patrix
 
 [![pipeline](https://github.com/martinberoiz/patrix/actions/workflows/test.yml/badge.svg)](https://github.com/martinberoiz/patrix/actions/workflows/test.yml)
-[![coverage](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/martinberoiz/patrix/main/.badge/coverage.json)](https://github.com/martinberoiz/patrix/actions/workflows/test.yml)
 [![docs](https://readthedocs.org/projects/patrix/badge/?version=latest)](https://patrix.readthedocs.io/)
 [![python](https://img.shields.io/pypi/pyversions/patrix)](https://pypi.org/project/patrix/)
 [![license](https://img.shields.io/pypi/l/patrix)](https://github.com/martinberoiz/patrix/blob/main/LICENSE.txt)
