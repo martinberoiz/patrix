@@ -42,7 +42,8 @@ Add a new word to the trie:
 
 ```python
 >>> from patrix import RadixTree
->>> r = RadixTree((("computer", 1), ("compute", 2), ("computing", 3)))
+>>> # Entries can be a list of strings or key-value tuples
+>>> r = RadixTree(("computer", "compute", ("computing", 1)))
 >>> r.as_dict()
 {'comput': {'e': {'': {}, 'r': {}}, 'ing': {}}}
 ```
