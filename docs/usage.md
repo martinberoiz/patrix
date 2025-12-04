@@ -26,6 +26,19 @@ Insert a new word into the radix tree:
 {'comput': {'e': {'': {}, 'r': {}}, 'ing': {}}}
 ```
 
+Get the value of an entry, or check if the tree contains some key:
+
+```python
+>>> r["computer"]
+1
+>>> "compute" in r
+True
+>>> "computing" in r
+True
+>>> "comput" in r
+False
+```
+
 ### Getting Completions
 
 Display suggestions on how to continue a given query prefix:
@@ -49,6 +62,14 @@ Convert the radix tree to a nested dictionary representation:
 >>> r = RadixTree(("computer", "compute", "computing"))
 >>> r.asdict()
 {'comput': {'e': {'': {}, 'r': {}}, 'ing': {}}}
+```
+
+### Upload from a dictionary
+
+```python
+>>> r = RadixTree.from_dict({'comput': {'e': {'': {}, 'r': {}}, 'ing': {}}})
+>>> "compute" in r
+True
 ```
 
 ### Compression Rate
@@ -79,9 +100,71 @@ Access tree metrics:
 11
 ```
 
+## Common Use Cases
+
+### Autocomplete System
+
+```python
+from patrix import RadixTree
+
+# Build a dictionary of words with their frequencies
+words = [
+    "python",
+    "programming",
+    "program",
+    "project",
+    "package",
+]
+
+# Create radix tree
+autocomplete = RadixTree(words)
+
+# Get suggestions as user types
+def get_suggestions(prefix):
+    return autocomplete.completions(prefix)
+
+# Example usage
+print(get_suggestions("p"))      # {'pro', 'python', 'package'}
+print(get_suggestions("pro"))    # {'program', 'project'}
+print(get_suggestions("program"))   # {'program', 'programming'}
+```
+
+### Word Dictionary
+
+```python
+from patrix import RadixTree
+
+words = [
+    ("hello", "greeting"),
+    ("help", "assistance"),
+    ("helicopter", "aircraft"),
+]
+
+# Create a dictionary
+dictionary = RadixTree(words)
+
+
+# Check if word exists
+def word_exists(word):
+    return word in dictionary
+
+
+# Get word definition
+def get_definition(word):
+    return dictionary.get(word)
+
+print(word_exists("hello"))  # True
+print(word_exists("he"))  # False
+print(word_exists("hi"))  # False
+print(get_definition("hello"))  # 'greeting'
+print(get_definition("help"))  # 'assistance'
+```
+
 ## Trie
 
 A standard trie (prefix tree) stores one character per node, making it simple but potentially more memory-intensive than a radix tree.
+
+This is added for educational purposes to understand prefix trees.
 
 ### Creating a Trie
 
@@ -125,86 +208,4 @@ Convert the trie to a nested dictionary representation:
 >>> t = trie.Trie((("trie", 1), ("try", 2), ("tree", 3)))
 >>> t.asdict()
 {'t': {'r': {'i': {'e': {}}, 'y': {}, 'e': {'e': {}}}}}
-```
-
-
-## Comparison: Trie vs Radix Tree
-
-### When to Use Trie
-
-- Simple use cases where memory is not a concern
-- Need to traverse character-by-character
-- Educational purposes to understand prefix trees
-
-### When to Use Radix Tree
-
-- Memory efficiency is important
-- Working with many words that share common prefixes
-- Building autocomplete systems for production
-- Need compression metrics
-
-### Memory Comparison
-
-The radix tree compresses common prefixes, significantly reducing memory usage when many words share prefixes. For example, with words like "computer", "compute", and "computing", the radix tree stores the common prefix "comput" once, while a trie would store each character separately.
-
-## Common Use Cases
-
-### Autocomplete System
-
-```python
-from patrix import RadixTree
-
-# Build a dictionary of words with their frequencies
-words = [
-    "python",
-    "programming",
-    "program",
-    "project",
-    "package",
-]
-
-# Create radix tree
-autocomplete = RadixTree(words)
-
-# Get suggestions as user types
-def get_suggestions(prefix):
-    return autocomplete.completions(prefix)
-
-# Example usage
-print(get_suggestions("p"))      # {'pro', 'python', 'package'}
-print(get_suggestions("pro"))    # {'program', 'project'}
-print(get_suggestions("program"))   # {'program', 'programming'}
-```
-
-### Word Dictionary
-
-```python
-from patrix import Trie
-
-words = [
-    ("hello", "greeting"),
-    ("help", "assistance"),
-    ("helicopter", "aircraft"),
-]
-
-# Create a dictionary
-dictionary = Trie(words)
-
-
-# Check if word exists
-def word_exists(word):
-    node = dictionary.search(word)
-    return node is not None and node.value is not None
-
-
-# Get word definition
-def get_definition(word):
-    node = dictionary.search(word)
-    return node.value if node and node.value else None
-
-print(word_exists("hello"))  # True
-print(word_exists("he"))  # False
-print(word_exists("hi"))  # False
-print(get_definition("hello"))  # 'greeting'
-print(get_definition("help"))  # 'assistance'
 ```

@@ -131,3 +131,22 @@ def test_from_dict():
     r = RadixTree(["computer", "computing", "compute", "screen"])
     s = RadixTree.from_dict(r.asdict())
     assert s.asdict() == r.asdict()
+
+
+def test_getitem():
+    r = RadixTree((("computer", 1), ("computing", 2), ("compute", 3)))
+    assert r["computer"] == 1
+    assert r["computing"] == 2
+    assert r["compute"] == 3
+    assert r.get("computer") == 1
+    assert r.get("computing") == 2
+    assert r.get("compute") == 3
+    assert r.get("comput", "fallback") == "fallback"
+
+
+def test_contains():
+    r = RadixTree(["computer", "computing", "compute"])
+    assert "computer" in r
+    assert "computing" in r
+    assert "compute" in r
+    assert "comput" not in r
