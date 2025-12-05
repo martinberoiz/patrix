@@ -156,3 +156,39 @@ def test_setitem():
     assert r["computing"] == 2
     r["compute"] = 3
     assert r["compute"] == 3
+
+
+def test_pop():
+    r = RadixTree(
+        [("computer", 1), ("compute", 2), ("computing", 3), ("deletethis", 4)]
+    )
+    assert r.pop("deletethis") == 4
+    assert r.asdict() == {"comput": {"e": {"r": {}, "": {}}, "ing": {}}}
+
+    assert r.pop("computer") == 1
+    assert r.asdict() == {"comput": {"ing": {}, "e": {}}}
+    
+    assert r.pop("compute") == 2
+    assert r.asdict() == {"computing": {}}
+
+    assert r.pop("computing") == 3
+    assert r.asdict() == {}
+
+    # Swap compute & computer order
+    r = RadixTree(
+        [("computer", 1), ("compute", 2), ("computing", 3)]
+    )
+    assert r.pop("compute") == 2
+    assert r.asdict() == {"comput": {"er": {}, "ing": {}}}
+    
+    assert r.pop("computer") == 1
+    assert r.asdict() == {"computing": {}}
+
+    assert r.pop("computing") == 3
+    assert r.asdict() == {}
+
+    # Test for default key
+    r = RadixTree(
+        [("computer", 1), ("compute", 2), ("computing", 3)]
+    )
+    assert r.pop("notakey", 0) == 0
