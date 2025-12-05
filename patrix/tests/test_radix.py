@@ -21,10 +21,6 @@ def test_init():
     r = RadixTree((("computer", 1), "computing", ("compute", 2)))
     assert "comput" in r.root.children
 
-    # Test loading from list of mixed strings and key-value pairs
-    r = RadixTree((("computer", 1), "computing", ("compute", 2)))
-    assert "comput" in r.root.children
-
 
 def test_parent_relations():
     r = RadixTree(["computer", "computing", "compute", "screen"])
