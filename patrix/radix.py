@@ -7,6 +7,8 @@ that have only one child, reducing memory usage while maintaining fast prefix-ba
 lookups and insertions.
 """
 
+_sentinel = object()
+
 
 class RadixTree:
     """
@@ -34,6 +36,7 @@ class RadixTree:
 
         """
         self.root = RadixNode()
+        self.root.is_root = True
         for entry in entries:
             if isinstance(entry, str):
                 self.insert(entry)
@@ -155,6 +158,14 @@ class RadixTree:
     def __setitem__(self, key, value):
         return self.insert(key, value)
 
+    def pop(self, key, default=_sentinel):
+        try:
+            return self.root.pop(key)
+        except KeyError:
+            if default is not _sentinel:
+                return default
+            raise KeyError(key)
+
 
 class RadixNode:
     """
@@ -193,6 +204,7 @@ class RadixNode:
         if value is not None:
             self.value = value
         self.parent = parent
+        self.is_root = False
 
     def insert(self, key, value=None):
         """
@@ -442,4 +454,34 @@ class RadixNode:
         node = self._search_node(key)
         if node is None:
             raise KeyError
+        return node.value
+
+    def pop(self, key):
+        node = self._search_node(key)
+        if node is None:
+            raise KeyError
+        parent = node.parent
+
+        # Delete the key
+        del parent.children[node.prefix]
+
+        # The root node is special in that it doesn't need to be updated
+        if parent.is_root:
+            return node.value
+
+        # If there is a single child, merge with parent
+        if len(parent.children) == 1:
+            single_child = next(iter(parent.children.values()))
+
+            # Update grandparent's parent key and the parent's prefix
+            del parent.parent.children[parent.prefix]
+            parent.prefix = f"{parent.prefix}{single_child.prefix}"
+            parent.parent.children[parent.prefix] = parent
+
+            # Update value if there is one
+            if single_child.value is not None:
+                parent.value = single_child.value
+
+            # Finally, delete the single child
+            del parent.children[single_child.prefix]
         return node.value
