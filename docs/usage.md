@@ -21,16 +21,16 @@ r = RadixTree((("computer", 1), "compute"))
 Insert a new word into the radix tree:
 
 ```python
->>> r.insert("computing")
->>> r.asdict()
-{'comput': {'e': {'': {}, 'r': {}}, 'ing': {}}}
+>>> r.insert("computing")  # Inserting a value is optional
+>>> r.insert("computing", 3)  # Insert with a value
+>>> r["computation"] = 4
+>>> r["computer"] = 2  # Updates 'computer' value
+>>> assert r["computer"] == 2
 ```
 
-Get the value of an entry, or check if the tree contains some key:
+Check if the tree contains some key:
 
 ```python
->>> r["computer"]
-1
 >>> "compute" in r
 True
 >>> "computing" in r

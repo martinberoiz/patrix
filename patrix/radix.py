@@ -152,6 +152,9 @@ class RadixTree:
     def __contains__(self, key):
         return self.root._search_node(key) is not None
 
+    def __setitem__(self, key, value):
+        return self.insert(key, value)
+
 
 class RadixNode:
     """
