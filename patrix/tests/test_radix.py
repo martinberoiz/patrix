@@ -167,7 +167,7 @@ def test_pop():
 
     assert r.pop("computer") == 1
     assert r.asdict() == {"comput": {"ing": {}, "e": {}}}
-    
+
     assert r.pop("compute") == 2
     assert r.asdict() == {"computing": {}}
 
@@ -175,12 +175,10 @@ def test_pop():
     assert r.asdict() == {}
 
     # Swap compute & computer order
-    r = RadixTree(
-        [("computer", 1), ("compute", 2), ("computing", 3)]
-    )
+    r = RadixTree([("computer", 1), ("compute", 2), ("computing", 3)])
     assert r.pop("compute") == 2
     assert r.asdict() == {"comput": {"er": {}, "ing": {}}}
-    
+
     assert r.pop("computer") == 1
     assert r.asdict() == {"computing": {}}
 
@@ -188,7 +186,5 @@ def test_pop():
     assert r.asdict() == {}
 
     # Test for default key
-    r = RadixTree(
-        [("computer", 1), ("compute", 2), ("computing", 3)]
-    )
+    r = RadixTree([("computer", 1), ("compute", 2), ("computing", 3)])
     assert r.pop("notakey", 0) == 0
