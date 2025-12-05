@@ -5,38 +5,13 @@
 [![python](https://img.shields.io/pypi/pyversions/patrix)](https://pypi.org/project/patrix/)
 [![license](https://img.shields.io/pypi/l/patrix)](https://github.com/martinberoiz/patrix/blob/main/LICENSE.txt)
 
-A python package that uses a radix tree (aka trie, compressed prefix tree, or compact prefix tree)
-to store a dictionary of known words and provides suggestions to complete partial words.
+Patrix provides a radix tree class (aka trie, compressed prefix tree, or compact prefix tree)
+that behaves mostly like a python dictionary
+but provides quick and efficient completion suggestions for partial word entries.
 
-It is used in autocomplete systems to provide suggestions to users based on the words they have typed.
-
-## Trie example
-
-```python
->>> from patrix import Trie
->>> t = Trie((("trie", 1), ("try", 2), ("tree", 3)))
->>> t.asdict()
-{'t': {'r': {'i': {'e': {}}, 'y': {}, 'e': {'e': {}}}}}
-```
-
-Search for a word in the trie:
-
-```python
->>> t.search("tri")
-<patrix.trie.TrieNode object at 0x7f952c171c10>
->>> t.search("tri").get_key()
-'tri'
->>> t.search("trio") is None
-True
-```
-
-Add a new word to the trie:
-
-```python
->>> t.insert("trio", 4)
->>> t.asdict()
-{'t': {'r': {'e': {'e': {}}, 'i': {'e': {}, 'o': {}}, 'y': {}}}}
-```
+This is useful for building autocomplete systems of long lists of known strings that share common prefixes.
+This is typical for hierarchical naming systems
+like file paths, IP addresses, or domain names, but it is not limited to those examples.
 
 ## Radix tree example
 
@@ -45,6 +20,9 @@ Add a new word to the trie:
 >>> # Entries can be a list of strings or key-value tuples
 >>> r = RadixTree(("computer", "compute", ("computing", 1)))
 >>> r.asdict()
+{'comput': {'e': {'': {}, 'r': {}}, 'ing': {}}}
+>>> s = RadixTree.from_dict({'comput': {'e': {'': {}, 'r': {}}, 'ing': {}}})
+>>> s.asdict()
 {'comput': {'e': {'': {}, 'r': {}}, 'ing': {}}}
 ```
 
@@ -59,6 +37,20 @@ Display suggestions on how to continue a given query prefix
 {'compute', 'computer'}
 >>> r.completions("p")
 set()
+```
+
+`RadixTree` behaves like a python dictionary:
+
+```python
+>>> r["computer"] = 1
+>>> r["compute"] = 2
+>>> r["computing"] = 3
+>>> r.pop("compute")
+2
+>>> "computing" in r
+True
+>>> r["computing"]
+3
 ```
 
 ## Compression rate
