@@ -467,7 +467,7 @@ class RadixNode:
 
     def pop(self, key):
         """
-        Pop the value associated with the given key from the subtree rooted at this node.
+        Pop the value for the given key from the subtree rooted at this node.
 
         Parameters
         ----------
@@ -477,7 +477,7 @@ class RadixNode:
         Returns
         -------
         any
-            The value associated with the given key.
+            The value for the given key.
 
         Raises
         ------
