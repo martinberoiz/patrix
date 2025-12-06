@@ -204,3 +204,59 @@ def test_items():
     assert set(r.keys()) == set()
     assert set(r.values()) == set()
     assert set(r.items()) == set()
+
+
+def test_container_methods():
+    r = RadixTree([("computer", 1), ("compute", 2), ("computing", 3), ("screen", 4)])
+    assert len(r) == 4
+    assert bool(r) == True
+    assert list(r) == ["computer", "compute", "computing", "screen"]
+
+    r = RadixTree()
+    assert len(r) == 0
+    assert bool(r) == False
+    assert list(r) == []
+
+
+def test_or():
+
+    def assert_inclusion(t, r):
+        """Assert that r is included in t"""
+        for k, v in r.items():
+            assert k in t
+            assert t[k] == v
+        assert len(r) <= len(t)
+
+    r = RadixTree([("computer", 1), ("compute", 2), ("computing", 3)])
+    s = RadixTree([("screen", 4), ("keyboard", 5)])
+    d = {"screen": 4, "keyboard": 5}
+
+    # Union with another RadixTree
+    t = r | s
+    assert_inclusion(t, r)
+    assert_inclusion(t, s)
+
+    # In-place union with another RadixTree
+    r |= s
+    assert_inclusion(r, s)
+    r = RadixTree([("computer", 1), ("compute", 2), ("computing", 3)])
+
+    # Union with a dictionary (right-hand side)
+    t = r | d
+    assert_inclusion(t, r)
+    assert_inclusion(t, d)
+
+    # Union with a dictionary (left-hand side)
+    t = d | r
+    assert_inclusion(t, d)
+    assert_inclusion(t, r)
+
+    # In-place union with a dictionary (right-hand side)
+    r |= d
+    assert_inclusion(r, d)
+    r = RadixTree([("computer", 1), ("compute", 2), ("computing", 3)])
+
+    # In-place union with a dictionary (left-hand side)
+    d |= r
+    assert_inclusion(d, r)
+    assert isinstance(d, dict)
