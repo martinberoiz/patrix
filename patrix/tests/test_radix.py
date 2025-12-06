@@ -188,3 +188,12 @@ def test_pop():
     # Test for default key
     r = RadixTree([("computer", 1), ("compute", 2), ("computing", 3)])
     assert r.pop("notakey", 0) == 0
+
+
+def test_items():
+    r = RadixTree([("computer", 1), ("compute", 2), ("computing", 3), ("screen", 4)])
+    assert set(r.keys()) == set(("computer", "compute", "computing", "screen"))
+    assert set(r.values()) == set((1, 2, 3, 4))
+    assert set(r.items()) == set(
+        (("computer", 1), ("compute", 2), ("computing", 3), ("screen", 4))
+    )

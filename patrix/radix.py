@@ -166,6 +166,15 @@ class RadixTree:
                 return default
             raise KeyError(key)
 
+    def keys(self):
+        return self.root.keys()
+
+    def values(self):
+        return self.root.values()
+
+    def items(self):
+        return self.root.items()
+
 
 class RadixNode:
     """
@@ -503,3 +512,39 @@ class RadixNode:
             # Finally, delete the single child
             del parent.children[single_child.prefix]
         return node.value
+
+    def keys(self):
+        """
+        Return all keys in the subtree rooted at this node.
+        """
+        stack = [self]
+        while stack:
+            node = stack.pop()
+            if node.children:
+                stack.extend(reversed(node.children.values()))
+                continue
+            yield node.key
+
+    def values(self):
+        """
+        Return all values in the subtree rooted at this node.
+        """
+        stack = [self]
+        while stack:
+            node = stack.pop()
+            if node.children:
+                stack.extend(reversed(node.children.values()))
+                continue
+            yield node.value
+
+    def items(self):
+        """
+        Return all items (key, value) in the subtree rooted at this node.
+        """
+        stack = [self]
+        while stack:
+            node = stack.pop()
+            if node.children:
+                stack.extend(reversed(node.children.values()))
+                continue
+            yield node.key, node.value
