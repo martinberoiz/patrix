@@ -52,6 +52,17 @@ KeyError: 'nokey'
 0
 ```
 
+Iterate on the tree entries:
+
+```python
+>>> list(filter(lambda k: k.startswith("compute"), r.keys()))
+['compute', 'computing']
+>>> list(filter(lambda v: v > 2, r.values()))
+[3, 4]
+>>> list(filter(lambda kv: kv[1] > 2, r.items()))
+[('computing', 3), ('computation', 4)]
+```
+
 ### Getting Completions
 
 Display suggestions on how to continue a given query prefix:
