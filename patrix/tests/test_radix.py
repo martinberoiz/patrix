@@ -246,12 +246,12 @@ def test_items():
 def test_container_methods():
     r = RadixTree([("computer", 1), ("compute", 2), ("computing", 3), ("screen", 4)])
     assert len(r) == 4
-    assert bool(r) == True
+    assert bool(r) is True
     assert list(r) == ["computer", "compute", "computing", "screen"]
 
     r = RadixTree()
     assert len(r) == 0
-    assert bool(r) == False
+    assert bool(r) is False
     assert list(r) == []
 
 
