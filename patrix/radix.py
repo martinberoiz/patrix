@@ -7,10 +7,10 @@ that have only one child, reducing memory usage while maintaining fast prefix-ba
 lookups and insertions.
 """
 
-_sentinel = object()
+from collections.abc import MutableMapping
 
 
-class RadixTree:
+class RadixTree(MutableMapping):
     """
     A radix tree data structure for key-value pairs storage with compressed prefixes.
 
@@ -148,34 +148,55 @@ class RadixTree:
     def __getitem__(self, key):
         return self.root[key]
 
-    def get(self, key, default=None):
-        try:
-            return self[key]
-        except KeyError:
-            return default
+    def __setitem__(self, key, value):
+        return self.insert(key, value)
+
+    def __delitem__(self, key):
+        return self.root.pop(key)
+
+    def __iter__(self):
+        return iter(self.root.keys())
+
+    def __len__(self):
+        return len(list(self.root.keys()))
 
     def __contains__(self, key):
         return self.root._search_node(key) is not None
 
-    def __setitem__(self, key, value):
-        return self.insert(key, value)
+    def __eq__(self, other):
+        for k, v in self.items():
+            if k not in other:
+                return False
+            if other[k] != v:
+                return False
+        return True
 
-    def pop(self, key, default=_sentinel):
-        try:
-            return self.root.pop(key)
-        except KeyError:
-            if default is not _sentinel:
-                return default
-            raise KeyError(key)
+    def copy(self):
+        c = RadixTree()
+        for k, v in self.items():
+            c[k] = v
+        return c
 
-    def keys(self):
-        return self.root.keys()
+    def __or__(self, other):
+        radix_tree = RadixTree()
+        for k, v in self.items():
+            radix_tree[k] = v
+        for k, v in other.items():
+            radix_tree[k] = v
+        return radix_tree
 
-    def values(self):
-        return self.root.values()
+    def __ior__(self, other):
+        for k, v in other.items():
+            self[k] = v
+        return self
 
-    def items(self):
-        return self.root.items()
+    def __ror__(self, other):
+        instance = type(other)()
+        for k, v in self.items():
+            instance[k] = v
+        for k, v in other.items():
+            instance[k] = v
+        return instance
 
 
 class RadixNode:
@@ -529,31 +550,3 @@ class RadixNode:
             if node.is_root:
                 return
             yield node.key
-
-    def values(self):
-        """
-        Return all values in the subtree rooted at this node.
-        """
-        stack = [self]
-        while stack:
-            node = stack.pop()
-            if node.children:
-                stack.extend(reversed(node.children.values()))
-                continue
-            if node.is_root:
-                return
-            yield node.value
-
-    def items(self):
-        """
-        Return all items (key, value) in the subtree rooted at this node.
-        """
-        stack = [self]
-        while stack:
-            node = stack.pop()
-            if node.children:
-                stack.extend(reversed(node.children.values()))
-                continue
-            if node.is_root:
-                return
-            yield node.key, node.value
