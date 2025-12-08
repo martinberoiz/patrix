@@ -68,7 +68,7 @@ class RadixTree:
             raise ValueError("Key must be a string")
         self.root.insert(key, value)
 
-    def completions(self, key):
+    def completions(self, key=""):
         """
         Return possible completions for the given key.
 
@@ -82,6 +82,8 @@ class RadixTree:
         list
             A list of possible completions for the given key.
         """
+        if key == "":
+            return set(self.root.children.keys())
         return self.root.completions(key)
 
     def asdict(self):
@@ -253,7 +255,8 @@ class RadixNode:
         if common_prefix == existing_prefix:
             # if this is a leaf node, preserve the prefix with an empty string
             if len(existing_child.children) == 0:
-                existing_child.insert("")
+                existing_child.insert("", existing_child.value)
+                existing_child.value = None
             remaining_key = key[len(common_prefix) :]
             existing_child.insert(remaining_key, value)
             return
@@ -523,6 +526,8 @@ class RadixNode:
             if node.children:
                 stack.extend(reversed(node.children.values()))
                 continue
+            if node.is_root:
+                return
             yield node.key
 
     def values(self):
@@ -535,6 +540,8 @@ class RadixNode:
             if node.children:
                 stack.extend(reversed(node.children.values()))
                 continue
+            if node.is_root:
+                return
             yield node.value
 
     def items(self):
@@ -547,4 +554,6 @@ class RadixNode:
             if node.children:
                 stack.extend(reversed(node.children.values()))
                 continue
+            if node.is_root:
+                return
             yield node.key, node.value
