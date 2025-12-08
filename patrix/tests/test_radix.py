@@ -35,29 +35,48 @@ def test_parent_relations():
 
 
 def test_asdict():
-    r = RadixTree(("computer",))
-    assert r.asdict() == {"computer": {}}
 
-    r = RadixTree(("computer", "screen"))
-    assert r.asdict() == {"computer": {}, "screen": {}}
+    r = RadixTree()
+    assert r.asdict() == {}
+    assert r.asdict(include_values=False) == {}
 
-    r = RadixTree(("computer", "compute"))
-    assert r.asdict() == {"compute": {"": {}, "r": {}}}
+    r = RadixTree((("computer", 1),))
+    assert r.asdict() == {"computer": {"__value__": 1}}
+    assert r.asdict(include_values=False) == {"computer": {}}
 
-    r = RadixTree(("computer", "computing"))
-    assert r.asdict() == {"comput": {"er": {}, "ing": {}}}
+    r = RadixTree((("computer", 1), ("screen", 2)))
+    assert r.asdict() == {"computer": {"__value__": 1}, "screen": {"__value__": 2}}
+    assert r.asdict(include_values=False) == {"computer": {}, "screen": {}}
 
-    r = RadixTree(("computer", "computing", "compute"))
-    assert r.asdict() == {"comput": {"e": {"": {}, "r": {}}, "ing": {}}}
+    r = RadixTree((("computer", 1), ("compute", 2)))
+    assert r.asdict() == {"compute": {"": {"__value__": 2}, "r": {"__value__": 1}}}
+    assert r.asdict(include_values=False) == {"compute": {"": {}, "r": {}}}
+
+    r = RadixTree((("computer", 1), ("computing", 2)))
+    assert r.asdict() == {"comput": {"er": {"__value__": 1}, "ing": {"__value__": 2}}}
+    assert r.asdict(include_values=False) == {"comput": {"er": {}, "ing": {}}}
+
+    r = RadixTree((("computer", 1), ("computing", 2), ("compute", 3)))
+    assert r.asdict() == {
+        "comput": {
+            "e": {"": {"__value__": 3}, "r": {"__value__": 1}},
+            "ing": {"__value__": 2},
+        }
+    }
+    assert r.asdict(include_values=False) == {
+        "comput": {"e": {"": {}, "r": {}}, "ing": {}}
+    }
 
 
 def test_insert():
     r = RadixTree(("computer",))
-    assert r.asdict() == {"computer": {}}
+    assert r.asdict(include_values=False) == {"computer": {}}
     r.insert("computing", 2)
-    assert r.asdict() == {"comput": {"er": {}, "ing": {}}}
+    assert r.asdict(include_values=False) == {"comput": {"er": {}, "ing": {}}}
     r.insert("compute", 3)
-    assert r.asdict() == {"comput": {"e": {"": {}, "r": {}}, "ing": {}}}
+    assert r.asdict(include_values=False) == {
+        "comput": {"e": {"": {}, "r": {}}, "ing": {}}
+    }
 
 
 def test_insertion_order():
@@ -68,7 +87,7 @@ def test_insertion_order():
 
 def test_duplicate():
     r = RadixTree((("computer", 1), ("computer", 2)))
-    assert r.asdict() == {"computer": {}}
+    assert r.asdict(include_values=False) == {"computer": {}}
 
 
 def test_empty_key():
@@ -130,6 +149,14 @@ def test_from_dict():
     s = RadixTree.from_dict(r.asdict())
     assert s.asdict() == r.asdict()
 
+    r = RadixTree((("computer", 1), ("computing", 2), ("compute", 3)))
+    s = RadixTree.from_dict(r.asdict())
+    assert s.asdict() == r.asdict()
+    assert s.asdict(include_values=False) == r.asdict(include_values=False)
+    assert s["computer"] == 1
+    assert s["computing"] == 2
+    assert s["compute"] == 3
+
 
 def test_getitem():
     r = RadixTree((("computer", 1), ("computing", 2), ("compute", 3)))
@@ -165,24 +192,26 @@ def test_pop():
         [("computer", 1), ("compute", 2), ("computing", 3), ("deletethis", 4)]
     )
     assert r.pop("deletethis") == 4
-    assert r.asdict() == {"comput": {"e": {"r": {}, "": {}}, "ing": {}}}
+    assert r.asdict(include_values=False) == {
+        "comput": {"e": {"r": {}, "": {}}, "ing": {}}
+    }
 
     assert r.pop("computer") == 1
-    assert r.asdict() == {"comput": {"ing": {}, "e": {}}}
+    assert r.asdict(include_values=False) == {"comput": {"ing": {}, "e": {}}}
 
     assert r.pop("compute") == 2
-    assert r.asdict() == {"computing": {}}
+    assert r.asdict(include_values=False) == {"computing": {}}
 
     assert r.pop("computing") == 3
-    assert r.asdict() == {}
+    assert r.asdict(include_values=False) == {}
 
     # Swap compute & computer order
     r = RadixTree([("computer", 1), ("compute", 2), ("computing", 3)])
     assert r.pop("compute") == 2
-    assert r.asdict() == {"comput": {"er": {}, "ing": {}}}
+    assert r.asdict(include_values=False) == {"comput": {"er": {}, "ing": {}}}
 
     assert r.pop("computer") == 1
-    assert r.asdict() == {"computing": {}}
+    assert r.asdict(include_values=False) == {"computing": {}}
 
     assert r.pop("computing") == 3
     assert r.asdict() == {}

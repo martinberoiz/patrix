@@ -86,7 +86,7 @@ class RadixTree(MutableMapping):
             return set(self.root.children.keys())
         return self.root.completions(key)
 
-    def asdict(self):
+    def asdict(self, include_values=True):
         """
         Convert the radix tree to a nested dictionary representation.
 
@@ -98,7 +98,7 @@ class RadixTree(MutableMapping):
             Note: This representation does not preserve the values stored
             in leaf nodes, only the tree structure.
         """
-        return self.root.asdict()
+        return self.root.asdict(include_values)
 
     @classmethod
     def from_dict(cls, node_dict):
@@ -114,6 +114,10 @@ class RadixTree(MutableMapping):
         while stack:
             # 'node' will be expanded with subtree
             node, subtree = stack.pop()
+            # Assign value to node if any
+            value = subtree.pop("__value__", None)
+            if value is not None:
+                node.value = value
             # Create and attach all initially empty children nodes to the node
             node.children = {k: RadixNode(k, parent=node) for k in subtree}
             # push the children nodes and what they should contain to the stack
@@ -411,7 +415,7 @@ class RadixNode:
                 return key1[:i]
         return key1[:min_length]
 
-    def asdict(self):
+    def asdict(self, include_values=True):
         """
         Convert the subtree rooted at this node to a nested dictionary.
 
@@ -425,7 +429,12 @@ class RadixNode:
             dictionaries representing child subtrees. Leaf nodes return
             empty dictionaries.
         """
-        return {k: v.asdict() for k, v in self.children.items()}
+        node_dict = {
+            k: v.asdict(include_values=include_values) for k, v in self.children.items()
+        }
+        if include_values and self.value is not None:
+            node_dict["__value__"] = self.value
+        return node_dict
 
     @property
     def height(self):
