@@ -54,8 +54,8 @@ nav:
   - Installation: install.md
   - Usage: usage.md
   - API Reference:
-    - Trie: api/trie.md
     - Radix Tree: api/radix.md
+    - Trie: api/trie.md
 
 
 copyright: Copyright &copy; 2025 California Institute of Technology and contributors

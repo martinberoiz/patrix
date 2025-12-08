@@ -1,234 +1,134 @@
 # Usage Guide
 
-This guide provides examples and common use cases for both the Trie and RadixTree implementations in Patrix.
+This guide provides examples and common use cases for the `RadixTree` implementation in Patrix.
 
-## Radix Tree
+## Create a new Radix Tree
 
-A radix tree (compressed trie) compresses common prefixes, making it more memory-efficient while maintaining fast operations.
-
-### Creating a Radix Tree
-
-Initialize a RadixTree with a collection of key-value pairs:
+Initialize a RadixTree with an iterable of entries.
+Entries can be bare strings (with default value `None`), or a `(key, value)` tuple.
 
 ```python
 from patrix import RadixTree
 
 # Create a radix tree with initial data
-# values are optional, but if provided, enter them as tuples (word, value)
-r = RadixTree((("computer", 1), "compute"))
+# values are optional, but if provided, enter them as (key, value) tuples
+entries = [
+    ("computer", 1),
+    "compute"
+]
+r = RadixTree(entries)
+r["computing"] = 3  # insert a new word
+r["compute"] = 2  # update the value of an existing word
 ```
 
-Insert a new word into the radix tree:
+Initialize from a dictionary or an iterable of words:
 
 ```python
->>> r["computing"] = 3
->>> r["computation"] = 4
->>> r["computer"] = 2  # Updates 'computer' value
->>> assert r["computer"] == 2
+entries = {
+    "computer": 1,
+    "compute": 2,
+    "computing": 3
+}
+r = RadixTree(entries.items())
+words = ["computer", "compute", "computing"]
+r = RadixTree(words)
 ```
 
-Check if the tree contains some key:
+## Suggest Word Completions
+
+Display possible completions for a given query prefix:
 
 ```python
->>> "compute" in r
-True
->>> "computing" in r
-True
->>> "comput" in r
-False
-```
-
-Pop an entry:
-
-```python
->>> r.pop("compute")
-2
->>> "compute" in r
-False
->>> r.pop("nokey")
-KeyError: 'nokey'
->>> r.pop("nokey", 0)
-0
-```
-
-Iterate on the tree entries:
-
-```python
->>> list(filter(lambda k: k.startswith("compute"), r.keys()))
-['compute', 'computing']
->>> list(filter(lambda v: v > 2, r.values()))
-[3, 4]
->>> list(filter(lambda kv: kv[1] > 2, r.items()))
-[('computing', 3), ('computation', 4)]
-```
-
-### Getting Completions
-
-Display suggestions on how to continue a given query prefix:
-
-```python
->>> r.completions("c")
+>>> r.completions()
 {'comput'}
 >>> r.completions("comput")
 {'compute', 'computing'}
->>> r.completions("compute")  # The word 'compute' is both a stem and a final word
+>>> # The word 'compute' is both a prefix and a final word
+>>> r.completions("compute")
 {'compute', 'computer'}
->>> r.completions("p")
+>>> r.completions("p")  # no words start with 'p'
 set()
 ```
 
-### Visualizing the Radix Tree
+## Store the Tree
 
-Convert the radix tree to a nested dictionary representation:
+The tree can be serialized to a nested dictionary representation to be stored on disk or sent over the network.
 
 ```python
->>> r = RadixTree(("computer", "compute", "computing"))
->>> r.asdict()
-{'comput': {'e': {'': {}, 'r': {}}, 'ing': {}}}
+import json
+>>> channels = {
+...    "H1:PEM-CS_ACC": {"sampling": 8192, "dtype": "float"},
+...    "H1:PEM-EX_LOW": {"sampling": 256, "dtype": "int"},
+...    "H1:PEM-VAU": {"sampling": 8192, "dtype": "float"},
+...    "H1:PEM-CS_MIC": {"sampling": 16384, "dtype": "float"},
+... }
+>>> r = RadixTree(channels.items())
+>>> # This will work as long as the node values
+>>> # can be serialized as json-encodable objects.
+>>> with open("tree.json", "w") as f:
+...    json.dump(r.asdict(), f, indent=2)
 ```
 
-### Upload from a dictionary
+To load the tree from a dictionary, use the `from_dict` class method:
 
 ```python
->>> r = RadixTree.from_dict({'comput': {'e': {'': {}, 'r': {}}, 'ing': {}}})
->>> "compute" in r
+>>> with open("tree.json", "r") as f:
+>>>     s = json.load(f)
+>>> r = RadixTree.from_dict(s)
+>>> "H1:PEM-CS_ACC" in r
 True
 ```
 
-### Compression Rate
-
-The radix tree compresses common prefixes, reducing memory usage:
-
-```python
->>> r.total_chars
-11
->>> len("computer" + "computing" + "compute")
-24
->>> 1 - 11 / 24  # 54% compression rate
-0.5416666666666667
->>> r.size  # nodes in the tree
-6
-```
-
-### Tree Properties
+## Access Tree Properties
 
 Access tree metrics:
 
 ```python
+>>> r = RadixTree(("computer", "computing", "compute"))
 >>> r.height  # Height of the tree
 3
 >>> r.size  # Number of nodes
 6
->>> r.total_chars  # Total characters in all prefixes
+>>> r.total_chars  # Total characters in all of the prefixes in the tree
 11
 ```
 
-## Common Use Cases
-
-### Autocomplete System
+The radix tree compresses common prefixes, reducing memory usage,
+but the level of compression will strongly depend on how many common prefixes are shared by the entries.
 
 ```python
-from patrix import RadixTree
-
-# Build a dictionary of words with their frequencies
-words = [
-    "python",
-    "programming",
-    "program",
-    "project",
-    "package",
-]
-
-# Create radix tree
-autocomplete = RadixTree(words)
-
-# Get suggestions as user types
-def get_suggestions(prefix):
-    return autocomplete.completions(prefix)
-
-# Example usage
-print(get_suggestions("p"))      # {'pro', 'python', 'package'}
-print(get_suggestions("pro"))    # {'program', 'project'}
-print(get_suggestions("program"))   # {'program', 'programming'}
+>>> r = RadixTree(("computer", "computing", "compute"))
+>>> total_chars = sum(map(len, r.keys()))
+>>> compression = 1 - r.total_chars / total_chars
+>>> compression  # 54% compression rate
+0.5416666666666667
 ```
 
-### Word Dictionary
+## Use the Tree as a Regular Dictionary
+
+RadixTree implements the python dictionary interface, subclassing from `collections.abc.MutableMapping`.
+All the standard dictionary methods are supported with the notable difference that the insertion order is not preserved.
 
 ```python
-from patrix import RadixTree
-
-words = [
-    ("hello", "greeting"),
-    ("help", "assistance"),
-    ("helicopter", "aircraft"),
-]
-
-# Create a dictionary
-dictionary = RadixTree(words)
-
-
-# Check if word exists
-def word_exists(word):
-    return word in dictionary
-
-
-# Get word definition
-def get_definition(word):
-    return dictionary.get(word)
-
-print(word_exists("hello"))  # True
-print(word_exists("he"))  # False
-print(word_exists("hi"))  # False
-print(get_definition("hello"))  # 'greeting'
-print(get_definition("help"))  # 'assistance'
-```
-
-## Trie
-
-A standard trie (prefix tree) stores one character per node, making it simple but potentially more memory-intensive than a radix tree.
-
-This is added for educational purposes to understand prefix trees.
-
-### Creating a Trie
-
-Initialize a Trie with a collection of key-value pairs:
-
-```python
-from patrix import trie
-
-# Create a trie with initial data
-t = trie.Trie((("trie", 1), ("try", 2), ("tree", 3)))
-```
-
-### Searching for Words
-
-Search for a word in the trie:
-
-```python
->>> t.search("tri")
-<patrix.trie.TrieNode object at 0x7f952c171c10>
->>> t.search("tri").get_key()
-'tri'
->>> t.search("trio") is None
+>>> r = RadixTree((("computer", 1), "compute", ("computing", 3)))
+>>> "compute" in r  # checks for membership
 True
-```
-
-### Inserting Words
-
-Add a new word to the trie:
-
-```python
->>> t["trio"] = 4
->>> t.asdict()
-{'t': {'r': {'e': {'e': {}}, 'i': {'e': {}, 'o': {}}, 'y': {}}}}
-```
-
-### Visualizing the Trie
-
-Convert the trie to a nested dictionary representation:
-
-```python
->>> t = trie.Trie((("trie", 1), ("try", 2), ("tree", 3)))
->>> t.asdict()
-{'t': {'r': {'i': {'e': {}}, 'y': {}, 'e': {'e': {}}}}}
+>>> r.pop("computer")  # pop an entry
+2
+>>> r |= {"computer": 2}  # update the tree with a dictionary
+>>> len(r), list(r)
+(3, ['compute', 'computer', 'computing'])
+>>> r.pop("nokey")
+KeyError: 'nokey'
+>>> r.pop("nokey", 0)
+0
+>>> # iterate on the tree entries
+>>> list(filter(lambda k: k.startswith("compute"), r.keys()))
+['compute', 'computer']
+>>> list(filter(lambda v: v > 1, r.values()))
+[2, 3]
+>>> list(filter(lambda kv: kv[1] > 1, r.items()))
+[('compute', 2), ('computing', 3)]
+>>> s = r.copy()  # shallow copy the tree
+>>> r.clear()  # clear the tree
 ```
