@@ -68,15 +68,23 @@ def test_asdict():
     }
 
 
-def test_insert():
+def test_length():
+    r = RadixTree()
+    assert len(r) == 0
     r = RadixTree(("computer",))
-    assert r.asdict(include_values=False) == {"computer": {}}
-    r.insert("computing", 2)
-    assert r.asdict(include_values=False) == {"comput": {"er": {}, "ing": {}}}
-    r.insert("compute", 3)
-    assert r.asdict(include_values=False) == {
-        "comput": {"e": {"": {}, "r": {}}, "ing": {}}
-    }
+    assert len(r) == 1
+    r["computing"] = None
+    assert len(r) == 2
+    r.pop("computing")
+    assert len(r) == 1
+    r.pop("nonexistent", None)
+    assert len(r) == 1
+    r["compute"] = None
+    assert len(r) == 2
+    del r["compute"]
+    assert len(r) == 1
+    r.popitem()
+    assert len(r) == 0
 
 
 def test_insertion_order():

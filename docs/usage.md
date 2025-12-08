@@ -21,8 +21,7 @@ r = RadixTree((("computer", 1), "compute"))
 Insert a new word into the radix tree:
 
 ```python
->>> r.insert("computing")  # Inserting a value is optional
->>> r.insert("computing", 3)  # Insert with a value
+>>> r["computing"] = 3
 >>> r["computation"] = 4
 >>> r["computer"] = 2  # Updates 'computer' value
 >>> assert r["computer"] == 2
@@ -219,7 +218,7 @@ True
 Add a new word to the trie:
 
 ```python
->>> t.insert("trio", 4)
+>>> t["trio"] = 4
 >>> t.asdict()
 {'t': {'r': {'e': {'e': {}}, 'i': {'e': {}, 'o': {}}, 'y': {}}}}
 ```

@@ -37,36 +37,13 @@ class RadixTree(MutableMapping):
         """
         self.root = RadixNode()
         self.root.is_root = True
+        self._len = 0
         for entry in entries:
             if isinstance(entry, str):
-                self.insert(entry)
+                self[entry] = None
             else:
-                self.insert(*entry)
-
-    def insert(self, key, value=None):
-        """
-        Insert a key-value pair into the radix tree.
-
-        If the key already exists, its value will be updated. The tree structure
-        is automatically compressed to share common prefixes among keys.
-
-        Parameters
-        ----------
-        key : str
-            The key to insert. Must be a non-empty string.
-        value
-            The value to associate with the key.
-
-        Raises
-        ------
-        ValueError
-            If key is empty or not a string.
-        """
-        if key == "":
-            raise ValueError("Key cannot be empty")
-        if not isinstance(key, str):
-            raise ValueError("Key must be a string")
-        self.root.insert(key, value)
+                key, value = entry
+                self[key] = value
 
     def completions(self, key=""):
         """
@@ -153,16 +130,24 @@ class RadixTree(MutableMapping):
         return self.root[key]
 
     def __setitem__(self, key, value):
-        return self.insert(key, value)
+        if key == "":
+            raise ValueError("Key cannot be empty")
+        if not isinstance(key, str):
+            raise ValueError("Key must be a string")
+        if key not in self:
+            self._len += 1
+        self.root.insert(key, value)
 
     def __delitem__(self, key):
+        if key in self:
+            self._len -= 1
         return self.root.pop(key)
 
     def __iter__(self):
         return iter(self.root.keys())
 
     def __len__(self):
-        return len(list(self.root.keys()))
+        return self._len
 
     def __contains__(self, key):
         return self.root._search_node(key) is not None
@@ -180,6 +165,9 @@ class RadixTree(MutableMapping):
         for k, v in self.items():
             c[k] = v
         return c
+
+    def clear(self):
+        self.root.children = {}
 
     def __or__(self, other):
         radix_tree = RadixTree()
