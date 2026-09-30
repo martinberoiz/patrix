@@ -32,20 +32,22 @@ words = [
 autocomplete = RadixTree(words)
 ```
 
-Query for possible completions of a partial word:
+Query for possible completions of a partial word.
+Each result is a `Completion`: the completed `prefix`, whether that prefix is a stored word (`is_word`), and whether the tree continues past it (`does_continue`).
+`completions` returns `None` when the query matches no entry.
 
 ```python
 # Example usage
 >>> autocomplete.completions()
-{'p'}
+{Completion(prefix='p', is_word=False, does_continue=True)}
 >>> autocomplete.completions("p")
-{'package', 'pro', 'python'}
+{Completion(prefix='package', is_word=True, does_continue=False), Completion(prefix='pro', is_word=False, does_continue=True), Completion(prefix='python', is_word=True, does_continue=False)}
 >>> autocomplete.completions("pro")
-{'program', 'project'}
+{Completion(prefix='program', is_word=True, does_continue=True), Completion(prefix='project', is_word=True, does_continue=False)}
 >>> autocomplete.completions("program")
-{'program', 'programming'}
+{Completion(prefix='program', is_word=True, does_continue=False), Completion(prefix='programming', is_word=True, does_continue=False)}
 >>> autocomplete.completions("programming")
-set()
+{Completion(prefix='programming', is_word=True, does_continue=False)}
 >>> autocomplete.completions("a") is None
 True
 ```

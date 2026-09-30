@@ -36,16 +36,17 @@ r = RadixTree(words)
 
 ## Suggest Word Completions
 
-Display possible completions for a given query prefix:
+Display possible completions for a given query prefix.
+Each result is a `Completion`: the completed `prefix`, whether that prefix is a stored word (`is_word`), and whether the tree continues past it (`does_continue`).
 
 ```python
 >>> r.completions()
-{'comput'}
+{Completion(prefix='comput', is_word=False, does_continue=True)}
 >>> r.completions("comput")
-{'compute', 'computing'}
->>> # The word 'compute' is both a prefix and a final word
+{Completion(prefix='compute', is_word=True, does_continue=True), Completion(prefix='computing', is_word=True, does_continue=False)}
+>>> # 'compute' is both a stored word and a stem of 'computer'
 >>> r.completions("compute")
-{'compute', 'computer'}
+{Completion(prefix='compute', is_word=True, does_continue=False), Completion(prefix='computer', is_word=True, does_continue=False)}
 >>> r.completions("p") is None # Return `None` when no valid completions are found
 True
 ```
