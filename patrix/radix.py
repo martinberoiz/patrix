@@ -249,14 +249,15 @@ class RadixNode:
             The value to associate with the key.
         """
         # Look for a node to insert the key into
-        common_prefix, existing_prefix, existing_child = self._find_common_prefix_child(
-            key
-        )
+        common_prefix, existing_child = self._find_common_prefix_child(key)
 
         # Case 1: No common prefix found - create a new child node
         if existing_child is None:
             self.children[key] = RadixNode(key, value, parent=self)
             return
+
+        # Prefix of the existing child
+        existing_prefix = existing_child.prefix
 
         # Case 2: Exact match - key matches an existing child's prefix exactly
         if common_prefix == existing_prefix == key:
@@ -310,7 +311,7 @@ class RadixNode:
         """
 
         query = key
-        common_prefix, existing_prefix, node = self._find_common_prefix_child(query)
+        common_prefix, node = self._find_common_prefix_child(query)
         if node is None:
             return set()
 
@@ -319,7 +320,7 @@ class RadixNode:
             query = query[len(common_prefix) :]
             # Save the last node that is not None
             last_node = node
-            common_prefix, existing_prefix, node = node._find_common_prefix_child(query)
+            common_prefix, node = node._find_common_prefix_child(query)
         # If the key is shorter than this node's key, complete until reaching
         # the node's key
         if len(key) < len(last_node.key):
@@ -354,6 +355,7 @@ class RadixNode:
 
         Iterates through all children to find the first one that has a non-empty
         common prefix with the input key.
+        The key can be longer or shorter than the child's prefix.
 
         Parameters
         ----------
@@ -363,18 +365,17 @@ class RadixNode:
         Returns
         -------
         tuple
-            A tuple (common_prefix, existing_prefix, child) where:
+            A tuple (common_prefix, child_prefix, child) where:
             - common_prefix (str): The longest common prefix between key
               and the first found child
-            - existing_prefix (str): The prefix of the first found child
             - child (RadixNode): The child node, or None if no common prefix exists
-            Returns ("", "", None) if no child shares a common prefix with key.
+            Returns ("", None) if no child shares a common prefix with key.
         """
-        for existing_prefix, child in self.children.items():
-            common_prefix = self._common_longest_prefix(key, existing_prefix)
+        for child_prefix, child in self.children.items():
+            common_prefix = self._common_longest_prefix(key, child_prefix)
             if len(common_prefix) > 0:
-                return common_prefix, existing_prefix, child
-        return "", "", None
+                return common_prefix, child
+        return "", None
 
     def _common_longest_prefix(self, key1, key2):
         """
@@ -464,9 +465,7 @@ class RadixNode:
         search_node = self
         search_key = key
         while search_node:
-            common_prefix, node_prefix, next_node = (
-                search_node._find_common_prefix_child(search_key)
-            )
+            common_prefix, next_node = search_node._find_common_prefix_child(search_key)
             node = search_node  # Save the current node
             # update the search key by dropping the common prefix
             search_key = search_key[len(common_prefix) :]
