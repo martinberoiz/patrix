@@ -8,6 +8,26 @@ lookups and insertions.
 """
 
 from collections.abc import MutableMapping
+from typing import NamedTuple
+
+
+class Completion(NamedTuple):
+    """
+    A suggested continuation for a query prefix.
+
+    Attributes
+    ----------
+    prefix : str
+        The completed string.
+    is_word : bool
+        Whether ``prefix`` is itself a stored word.
+    does_continue : bool
+        Whether the tree has further completions beyond ``prefix``.
+    """
+
+    prefix: str
+    is_word: bool
+    does_continue: bool
 
 
 class RadixTree(MutableMapping):
@@ -56,14 +76,12 @@ class RadixTree(MutableMapping):
 
         Returns
         -------
-        set or None
-            A set of possible completions for the given key, or ``None``
-            if no entries in the tree share the given prefix. An empty
-            set indicates that the key itself exists in the tree but has
-            no further completions.
+        set of Completion or None
+            A set of ``Completion`` named tuples for the given key, or
+            ``None`` if no entries in the subtree match the given key.
         """
         if key == "":
-            return set(self.root.children.keys())
+            return {child.as_completion() for child in self.root.children.values()}
         return self.root.completions(key)
 
     def asdict(self, include_values=True):
@@ -309,11 +327,9 @@ class RadixNode:
 
         Returns
         -------
-        set or None
-            A set of possible completions for the given key, or ``None``
-            if no entries in the tree share the given prefix. An empty
-            set indicates that the key itself exists in the tree but has
-            no further completions.
+        set of Completion or None
+            A set of ``Completion`` named tuples for the given key, or
+            ``None`` if no entries in the subtree match the given key.
         """
 
         query = key
@@ -330,9 +346,15 @@ class RadixNode:
         # If the key is shorter than this node's key, complete until reaching
         # the node's key
         if len(key) < len(last_node.key):
-            return {last_node.key}
+            return {last_node.as_completion()}
+        # If the key is longer than this node's key there are no completions
+        if len(key) > len(last_node.key):
+            return None
         # When at exactly this node's key, complete with the children's keys
-        return set(nd.key for nd in last_node.children.values())
+        # or return the key again
+        if len(last_node.children) == 0:
+            return {last_node.as_completion()}
+        return {nd.as_completion() for nd in last_node.children.values()}
 
     @property
     def value(self):
@@ -354,6 +376,14 @@ class RadixNode:
         All the siblings, including the child.
         """
         return self.parent.children
+
+    @property
+    def is_word(self):
+        """A node is a word when is a leaf or contains an empty-string child"""
+        return len(self.children) == 0 or "" in self.children
+
+    def as_completion(self):
+        return Completion(self.key, self.is_word, len(self.children) > 0)
 
     def _find_common_prefix_child(self, key):
         """
