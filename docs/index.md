@@ -32,8 +32,8 @@ like file paths, IP addresses, or domain names, but it is not limited to those e
 {'compute', 'computing'}
 >>> r.completions("compute") # The word 'compute' here is both a stem and a final word
 {'compute', 'computer'}
->>> r.completions("p")
-set()
+>>> r.completions("p") is None
+True
 ```
 
 Check the [usage](./usage.md) section for full examples.

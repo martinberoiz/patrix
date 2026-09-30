@@ -46,6 +46,8 @@ Query for possible completions of a partial word:
 {'program', 'programming'}
 >>> autocomplete.completions("programming")
 set()
+>>> autocomplete.completions("a") is None
+True
 ```
 
 ### Save and load a tree

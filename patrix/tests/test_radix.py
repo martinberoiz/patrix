@@ -131,7 +131,7 @@ def test_completions():
     assert r.completions("computing") == set()
     assert r.completions("computer") == set()
     assert r.completions("s") == {"screen"}
-    assert r.completions("a") == set()
+    assert r.completions("a") is None
 
 
 def test_size():

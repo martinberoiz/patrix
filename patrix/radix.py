@@ -56,8 +56,11 @@ class RadixTree(MutableMapping):
 
         Returns
         -------
-        list
-            A list of possible completions for the given key.
+        set or None
+            A set of possible completions for the given key, or ``None``
+            if no entries in the tree share the given prefix. An empty
+            set indicates that the key itself exists in the tree but has
+            no further completions.
         """
         if key == "":
             return set(self.root.children.keys())
@@ -306,14 +309,17 @@ class RadixNode:
 
         Returns
         -------
-        set
-            A set of possible completions for the given key.
+        set or None
+            A set of possible completions for the given key, or ``None``
+            if no entries in the tree share the given prefix. An empty
+            set indicates that the key itself exists in the tree but has
+            no further completions.
         """
 
         query = key
         common_prefix, node = self._find_common_prefix_child(query)
         if node is None:
-            return set()
+            return None
 
         while node is not None:
             # Update search prefix to remove the common_prefix found

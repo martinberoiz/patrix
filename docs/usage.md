@@ -46,8 +46,8 @@ Display possible completions for a given query prefix:
 >>> # The word 'compute' is both a prefix and a final word
 >>> r.completions("compute")
 {'compute', 'computer'}
->>> r.completions("p")  # no words start with 'p'
-set()
+>>> r.completions("p") is None # Return `None` when no valid completions are found
+True
 ```
 
 ## Store the Tree
