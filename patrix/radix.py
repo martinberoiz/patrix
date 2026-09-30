@@ -289,7 +289,7 @@ class RadixNode:
         # Case 3: Key extends beyond the common prefix - recursively insert given key
         if common_prefix == existing_prefix:
             # if this is a leaf node, preserve the prefix with an empty string
-            if len(existing_child.children) == 0:
+            if existing_child.is_leaf:
                 existing_child.insert("", existing_child.value)
                 existing_child.value = None
             remaining_key = key[len(common_prefix) :]
@@ -352,7 +352,7 @@ class RadixNode:
             return None
         # When at exactly this node's key, complete with the children's keys
         # or return the key again
-        if len(last_node.children) == 0:
+        if last_node.is_leaf:
             return {last_node.as_completion()}
         return {nd.as_completion() for nd in last_node.children.values()}
 
@@ -380,10 +380,15 @@ class RadixNode:
     @property
     def is_word(self):
         """A node is a word when is a leaf or contains an empty-string child"""
-        return len(self.children) == 0 or "" in self.children
+        return self.is_leaf or "" in self.children
+
+    @property
+    def is_leaf(self):
+        """A node is a leaf when it has no children"""
+        return len(self.children) == 0
 
     def as_completion(self):
-        return Completion(self.key, self.is_word, len(self.children) > 0)
+        return Completion(self.key, self.is_word, not self.is_leaf)
 
     def _find_common_prefix_child(self, key):
         """
@@ -511,7 +516,7 @@ class RadixNode:
             return None
         if "" in node.children:
             return node.children[""]
-        if len(node.children) != 0:
+        if not node.is_leaf:
             return None
         return node
 
