@@ -1,4 +1,4 @@
-from patrix import RadixTree
+from patrix import Completion, RadixTree
 import pytest
 
 
@@ -123,15 +123,31 @@ def test_key():
 
 def test_completions():
     r = RadixTree(["computer", "computing", "compute", "screen"])
-    assert r.completions() == {"comput", "screen"}
-    assert r.completions("") == {"comput", "screen"}
-    assert r.completions("comp") == {"comput"}
-    assert r.completions("comput") == {"compute", "computing"}
-    assert r.completions("compute") == {"compute", "computer"}
-    assert r.completions("computing") == set()
-    assert r.completions("computer") == set()
-    assert r.completions("s") == {"screen"}
-    assert r.completions("a") == set()
+    assert r.completions() == {
+        Completion("comput", False, True),
+        Completion("screen", True, False),
+    }
+    assert r.completions("") == {
+        Completion("comput", False, True),
+        Completion("screen", True, False),
+    }
+    assert r.completions("comp") == {Completion("comput", False, True)}
+    assert r.completions("comput") == {
+        Completion("compute", True, True),
+        Completion("computing", True, False),
+    }
+    assert r.completions("compute") == {
+        Completion("compute", True, False),
+        Completion("computer", True, False),
+    }
+    assert r.completions("computing") == {
+        Completion("computing", True, False),
+    }
+    assert r.completions("computer") == {
+        Completion("computer", True, False),
+    }
+    assert r.completions("s") == {Completion("screen", True, False)}
+    assert r.completions("a") is None
 
 
 def test_size():

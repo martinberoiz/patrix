@@ -27,13 +27,13 @@ like file paths, IP addresses, or domain names, but it is not limited to those e
 >>> r = RadixTree(words)
 >>> # Display suggestions on how to continue a given query prefix
 >>> r.completions("")
-{'comput'}
+{Completion(prefix='comput', is_word=False, does_continue=True)}
 >>> r.completions("comput")
-{'compute', 'computing'}
->>> r.completions("compute") # The word 'compute' here is both a stem and a final word
-{'compute', 'computer'}
->>> r.completions("p")
-set()
+{Completion(prefix='compute', is_word=True, does_continue=True), Completion(prefix='computing', is_word=True, does_continue=False)}
+>>> r.completions("compute") # 'compute' is both a stored word and a stem of 'computer'
+{Completion(prefix='compute', is_word=True, does_continue=False), Completion(prefix='computer', is_word=True, does_continue=False)}
+>>> r.completions("p") is None
+True
 ```
 
 Check the [usage](./usage.md) section for full examples.
